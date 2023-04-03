@@ -3,7 +3,7 @@ import {
   createProducts,
   deleteProduct,
   listProduct,
-  listProductById,
+  listProductId,
   updateProduct,
 } from "./logic";
 import { ensureIdExists, ensureProductExists } from "./middlewares";
@@ -13,7 +13,7 @@ app.use(json());
 
 app.post("/products", ensureProductExists, createProducts);
 app.get("/products", listProduct);
-app.get("/products/:id", ensureIdExists, listProductById);
+app.get("/products/:id", ensureIdExists, listProductId);
 app.delete("/products/:id", ensureIdExists, deleteProduct);
 app.patch("/products/:id", ensureIdExists, ensureProductExists, updateProduct);
 

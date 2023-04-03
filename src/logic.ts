@@ -4,16 +4,22 @@ import { IMarketResponse, IProduct, TFoodProduct } from "./interfaces";
 
 let idCounter = 0;
 
-const createProducts = (request: Request, response: Response): Response => {
-  const productData: TFoodProduct = request.body;
+const createProducts = (req: Request, res: Response): Response => {
+  const productData: TFoodProduct = req.body;
+
 
   const products = Array.isArray(productData) ? productData : [productData];
 
-  const newProductData: IProduct[] = [];
+  const marketProducts: IProduct[] = [];
 
-  const date = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+  const date = new Date(Date.now() + (365 * 24 * 60 * 60 * 1000));
 
   products.forEach((product) => {
+    const productExists = market.some((existingProduct) => existingProduct.name === product.name);
+    if (productExists) {
+      return res.status(409).json({ error: "Product already exists" });
+    }
+
     const newProduct: IProduct = {
       id: idCounter,
       name: product.name,
@@ -25,61 +31,77 @@ const createProducts = (request: Request, response: Response): Response => {
     };
 
     market.push(newProduct);
-    newProductData.push(newProduct);
+    marketProducts.push(newProduct);
     idCounter++;
   });
 
   const total = market.reduce((acc, product) => acc + product.price, 0);
 
-  return response.status(201).json({ total, newProductData });
+  return res.status(201).json({ total, marketProducts });
 };
 
-const listProduct = (request: Request, response: Response): Response => {
+
+const listProduct = (req: Request, res: Response): Response => {
   const total = market.reduce((acc, product) => acc + product.price, 0);
-  const data: IMarketResponse = {
+  const response: IMarketResponse = {
     total,
     marketProducts: market,
   };
-  return response.json(data);
+  return res.json(response);
 };
 
-const listProductById = (request: Request, response: Response): Response => {
-  const id = parseInt(request.params.id);
-  const index = market.find((prod) => prod.id === id);
+const listProductId = (req: Request, res: Response): Response => {
+  const id = parseInt(req.params.id);
+  const findIndex = market.find((prod) => prod.id === id);
 
-  return response.status(200).json(index);
+
+  console.log(findIndex)
+  return res.status(200).json(findIndex);
 };
 
-const deleteProduct = (request: Request, response: Response): Response => {
-  const id = parseInt(request.params.id);
+
+const deleteProduct = (req: Request, res: Response): Response => {
+  const id = parseInt(req.params.id);
   const findIndex = market.findIndex((prod) => prod.id === id);
-
+ 
   market.splice(findIndex, 1);
-
-  return response.status(204).send();
+  
+  return res.status(204).send();
 };
 
-const updateProduct = (request: Request, response: Response): Response => {
-  const id = parseInt(request.params.id);
+
+const updateProduct = (req: Request, res: Response): Response => {
+  const id = parseInt(req.params.id);
   const index = market.findIndex((prod) => prod.id === id);
-  const updateData = request.body;
+  
+  // if (index === -1) { 
+  //   return res.status(404).json({ error: 'Product not found' });
+  // }
+  const updateData = req.body;
+  // const findProductName = market.find((prod)=> prod.name == updateData.name)
+
+  // if (findProductName){
+  //   return res.status(409).json({ error: 'Product already exists'})
+  // }
 
   const updatedProduct = {
     ...market[index],
     ...updateData,
     id: market[index].id,
     section: market[index].section,
-    expirationDate: market[index].expirationDate,
+     expirationDate: market[index].expirationDate,
   };
   market[index] = updatedProduct;
 
-  return response.json(market[index]);
+  return res.json(market[index]);
 };
+
+
 
 export {
   createProducts,
   listProduct,
-  listProductById,
+  listProductId,
   deleteProduct,
   updateProduct,
 };
