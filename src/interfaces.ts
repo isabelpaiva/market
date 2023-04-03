@@ -1,4 +1,3 @@
-//interfaces.ts: arquivo onde ficarão todas as interfaces ou types criados.
 interface IProduct {
     id: number
     name: string
@@ -15,6 +14,8 @@ interface IMarketResponse {
 interface IFoodProduct extends IProduct {
     calories: number
 }
-type TFoodProduct = Omit<IFoodProduct, "id">
 interface ICleaningProduct extends IProduct {}
+
+type TFoodProduct = Omit<IFoodProduct, "id">
+
 export { IProduct, TFoodProduct, IMarketResponse };
