@@ -73,16 +73,8 @@ const deleteProduct = (req: Request, res: Response): Response => {
 const updateProduct = (req: Request, res: Response): Response => {
   const id = parseInt(req.params.id);
   const index = market.findIndex((prod) => prod.id === id);
-  
-  // if (index === -1) { 
-  //   return res.status(404).json({ error: 'Product not found' });
-  // }
   const updateData = req.body;
-  // const findProductName = market.find((prod)=> prod.name == updateData.name)
 
-  // if (findProductName){
-  //   return res.status(409).json({ error: 'Product already exists'})
-  // }
 
   const updatedProduct = {
     ...market[index],
