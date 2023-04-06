@@ -54,8 +54,6 @@ const listProductId = (req: Request, res: Response): Response => {
   const id = parseInt(req.params.id);
   const findIndex = market.find((prod) => prod.id === id);
 
-
-  console.log(findIndex)
   return res.status(200).json(findIndex);
 };
 
